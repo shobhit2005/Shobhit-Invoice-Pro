@@ -66,6 +66,8 @@ export interface OpsOverviewPayload {
 }
 
 const TOKEN_KEY = 'shobhit_invoice_pro_token';
+const API_BASE = ((import.meta as unknown as { env?: { VITE_API_BASE_URL?: string } }).env?.VITE_API_BASE_URL || '').replace(/\/+$/, '');
+const apiUrl = (path: string) => (path.startsWith('http') ? path : `${API_BASE}${path}`);
 
 interface StoreContextValue {
   db: AppDatabase | null;
@@ -333,7 +335,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, [darkMode]);
 
   const apiFetch = async <T,>(url: string, init?: RequestInit): Promise<T> => {
-    const res = await fetch(url, {
+    const res = await fetch(apiUrl(url), {
       ...init,
       headers: {
         'Content-Type': 'application/json',
@@ -361,7 +363,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       setLoading(true);
       try {
         if (token) {
-          const res = await fetch('/api/bootstrap', {
+          const res = await fetch(apiUrl('/api/bootstrap'), {
             headers: { Authorization: `Bearer ${token}` },
           });
           if (res.ok) {
@@ -372,7 +374,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             if (active) setToken('');
           }
         } else if (!localStorage.getItem('shobhit_logged_out')) {
-          const res = await fetch('/api/auth/demo', { method: 'POST' });
+          const res = await fetch(apiUrl('/api/auth/demo'), { method: 'POST' });
           if (res.ok) {
             const json = await res.json();
             localStorage.setItem(TOKEN_KEY, json.token);
@@ -406,7 +408,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const login = async (identifier: string, password: string): Promise<boolean> => {
     setAuthError('');
     try {
-      const res = await fetch('/api/auth/login', {
+      const res = await fetch(apiUrl('/api/auth/login'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ identifier, email: identifier, password }),
@@ -439,7 +441,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }): Promise<boolean> => {
     setAuthError('');
     try {
-      const res = await fetch('/api/auth/register', {
+      const res = await fetch(apiUrl('/api/auth/register'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -462,7 +464,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const requestAuthOtp = async (target: string, channel?: 'phone' | 'email') => {
     setAuthError('');
-    const res = await fetch('/api/auth/otp/request', {
+    const res = await fetch(apiUrl('/api/auth/otp/request'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ target, channel }),
@@ -478,7 +480,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const verifyAuthOtp = async (target: string, channel: 'phone' | 'email', code: string): Promise<boolean> => {
     setAuthError('');
     try {
-      const res = await fetch('/api/auth/otp/verify', {
+      const res = await fetch(apiUrl('/api/auth/otp/verify'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ target, channel, code }),
@@ -502,7 +504,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const loginDemo = async (): Promise<boolean> => {
     setAuthError('');
     try {
-      const res = await fetch('/api/auth/demo', { method: 'POST' });
+      const res = await fetch(apiUrl('/api/auth/demo'), { method: 'POST' });
       const json = await res.json();
       if (!res.ok) {
         setAuthError(json.error || 'Demo login failed');
