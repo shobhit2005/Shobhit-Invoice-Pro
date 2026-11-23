@@ -1,0 +1,83 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  :root {
+    --font-display: 'Plus Jakarta Sans', system-ui, sans-serif;
+    --font-sans: 'DM Sans', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+    --app-sidebar: #116B68;
+    --app-sidebar-active: #168C88;
+    --app-primary: #168C88;
+    --app-bg: #F3F5F7;
+    --app-card: #FFFFFF;
+    --app-table-header: #E5EFF3;
+    --app-text: #243746;
+    --app-text-secondary: #84909D;
+    --app-success: #16A34A;
+    --app-warning: #F59E0B;
+    --app-danger: #EF4444;
+    --app-link: #2676A8;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: #F3F5F7;
+    color: #243746;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  html.dark body {
+    background-color: #020617;
+    color: #F1F5F9;
+  }
+
+  h1, h2, h3, .font-display {
+    font-family: var(--font-display);
+  }
+
+  .font-mono, .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+
+  html:not(.dark) table thead tr,
+  html:not(.dark) table thead th {
+    background-color: #E5EFF3;
+    color: #243746;
+  }
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #printable-invoice, #printable-invoice *,
+  #printable-barcode, #printable-barcode *,
+  #printable-report, #printable-report * {
+    visibility: visible;
+  }
+  #printable-invoice, #printable-barcode, #printable-report {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    background: #ffffff !important;
+    color: #000000 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
